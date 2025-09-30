@@ -4,7 +4,7 @@ const {createCourse, listCourse, eachCourse, updateCourse, deleteCourse} =  requ
 const { createCategory, listCategory, eachCategory, updateCategory, deleteCategory } = require("../controllers/category.js");
 
 const auth = require("../auth/main.auth.js");
-const { createEnrollments, listEnrollments, eachEnrollments, deleteEnrollments } = require("../controllers/enrollments.js");
+const { createEnrollments, listEnrollments, eachEnrollments, deleteEnrollments, searchSubscribed, pay } = require("../controllers/enrollments.js");
 const { login } = require("../controllers/authController.js");
 
 // categoria
@@ -26,13 +26,11 @@ router.post("/subscribe/create/:course_id",  createEnrollments);
 router.get("/subscribe/all/:course_id", listEnrollments);
 router.get("/subscribe/each/:subscribe_id", eachEnrollments);
 router.delete("/subscribe/delete/:subscribe_id", auth.admin, deleteEnrollments);
+router.post("/subscribe/search/:course_id", auth.admin, searchSubscribed)
+router.post("/subscribe/pay/:subscribe_id", auth.admin, pay)
 
 // auth
 router.post("/auth/login",  login);
-
-
-
-
 
 module.exports = router;
 

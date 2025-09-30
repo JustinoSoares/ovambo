@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const { Enrollments } = require("../../models/index.js");
 const { validate } = require("uuid");
 
@@ -60,9 +60,8 @@ module.exports = {
                 }
             });
 
-            if (!enrollment)
-            {
-                 return res.status(400).json({
+            if (!enrollment) {
+                return res.status(400).json({
                     message: "Não foi encontrada este inscrição"
                 })
             }
@@ -82,8 +81,7 @@ module.exports = {
         const offset = limit * (page - 1);
 
         const course_id = await req.params.course_id;
-        if (!course_id || !validate(course_id))
-        {
+        if (!course_id || !validate(course_id)) {
             return res.status(400).json({
                 message: "deve especificar qual é o curso"
             });
@@ -93,8 +91,8 @@ module.exports = {
             const enrollments = await Enrollments.findAll({
                 limit: limit,
                 offset: offset,
-                where : {
-                    course_id : course_id
+                where: {
+                    course_id: course_id
                 }
             });
             return res.status(200).json(enrollments);
@@ -144,5 +142,91 @@ module.exports = {
             });
         }
 
+    },
+
+    async searchSubscribed(req, res) {
+        try {
+            const { data } = req.body; // termo de busca
+            const { course_id } = req.params;
+
+            if (!course_id || !validate(course_id)) {
+                return res.status(400).json({
+                    message: "Por favor especifique o curso",
+                });
+            }
+
+            if (!data) {
+                return res.status(400).json({
+                    message: "Por favor digite o nome, telefone ou email",
+                });
+            }
+
+            let where = { course_id };
+
+            if (data) {
+                where[Op.or] = [
+                    { email: { [Op.iLike]: `%${data}%` } },
+                    { phone: { [Op.iLike]: `%${data}%` } },
+                    { full_name: { [Op.iLike]: `%${data}%` } }
+                ];
+            }
+
+            const enrollments = await Enrollments.findAll({
+                where,
+                order: [["createdAt", "DESC"]]
+            });
+
+            return res.status(200).json(enrollments);
+        } catch (error) {
+            return res.status(500).json({
+                message: "Erro ao buscar inscrições",
+                error: error.message
+            });
+        }
+    },
+
+    async pay(req, res) {
+        const subscribe_id = req.params.subscribe_id;
+
+        if (!subscribe_id || !validate(subscribe_id)) {
+            return res.status(400).json({
+                message: "Por favor especifique o inscrição",
+            });
+        }
+        try {
+            const existSubscribe = await Enrollments.findOne({
+                where: {
+                    id: subscribe_id
+                }
+            });
+
+            if (!existSubscribe) {
+                return res.status(400).json({
+                    message: "Não foi encontrado essa inscrição",
+                })
+            }
+
+            if (existSubscribe.status == "paid") {
+                return res.status(400).json({
+                    message: "Essa inscrição já foi paga",
+                })
+            }
+
+            await Enrollments.update({
+                status: "paid"
+            }, {
+                where: {
+                    id: subscribe_id
+                }
+            });
+            return res.status(200).json({
+                message: "Sucesso",
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "Erro ao fazer o pagamento",
+                error: error.message
+            })
+        }
     }
 }
