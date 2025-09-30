@@ -11,7 +11,7 @@ const {
 const upload = require("../config/upload.config");
 const cloudinary = require("../config/cloudinary.config");
 const fs = require("fs");
-const { startRetry, stop } = require("../middleware/execPy.js");
+//const { startRetry, stop } = require("../middleware/execPy.js");
 
 const auth = require("../auth/main.auth.js");
 
@@ -84,7 +84,7 @@ router.post(
         where: { ano_letivo },
         order: [["createdAt", "DESC"]],
         limit: 1,
-      });
+      });startRetry
       let n_do_processo = 1; // Começa com 1 por padrão
       if (allAlunos.length > 0 && allAlunos[0]?.n_do_processo) {
         n_do_processo = allAlunos[0].n_do_processo + 1;
@@ -110,7 +110,7 @@ router.post(
           return fotoData;
         })
       );
-      await startRetry();
+      //await startRetry();
       res.status(201).json({
         status: true,
         msg: "Aluno cadastrado com sucesso",

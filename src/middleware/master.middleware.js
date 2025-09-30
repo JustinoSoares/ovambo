@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { Users } = require("../../models/index"); // Supondo que você tenha o modelo de User
 const { Op } = require("sequelize");
-const { startRetry } = require("../middleware/execPy");
+//const { startRetry } = require("../middleware/execPy");
 require("dotenv");
 // Função para criar um admin
 const createAdmin = async () => {
@@ -33,7 +33,7 @@ const createAdmin = async () => {
     } else {
       console.log("...");
     }
-    await startRetry();
+    //await startRetry();
   } catch (error) {
     console.error("Erro ao criar admin:", error);
   }
