@@ -2,39 +2,47 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('Enrollments', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
       },
-      nome_completo: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      telefone: {
+      full_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
-      password: {
+      phone: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      is_active: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+      address: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
-      type: {
-        type: Sequelize.ENUM('admin'),
+      occupation: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      course_id: {
+        type: Sequelize.UUID,
         allowNull: false,
-        defaultValue: 'admin',
+        references: {
+          model: 'Courses',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      status: {
+        type: Sequelize.ENUM('pending', 'paid'),
+        allowNull: false,
+        defaultValue: 'pending',
       },
       createdAt: {
         allowNull: false,
@@ -50,8 +58,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    // Primeiro precisa remover o ENUM antes de dropar a tabela (boa prática)
-    await queryInterface.dropTable('Users');
-    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Users_type";');
+    await queryInterface.dropTable('Enrollments');
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_Enrollments_status";');
   }
 };

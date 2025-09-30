@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Users.init({
-    id : {
-      type : DataTypes.UUID,
-      primaryKey : true,
-      defaultValue : uuidv4,
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: uuidv4,
     },
     nome_completo: {
       type: DataTypes.STRING,
@@ -35,23 +35,34 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true, // Garante que o valor seja um email válido
       },
     },
-    password : {
-      type : DataTypes.STRING,
-      allowNull : false,
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    is_active : {
-      type : DataTypes.BOOLEAN,
-      defaultValue : false,
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     type: {
-        type: DataTypes.ENUM("admin", "vigilante"),
-        defaultValue: "vigilante",
-        allowNull: false,
+      type: DataTypes.ENUM("admin"),
+      defaultValue: "admin",
+      allowNull: false,
     },
   }, {
     sequelize,
     modelName: 'Users',
     tableName: 'Users',
   });
+
+  // Isso vai sincronizar TODOS os models com o banco
+  /*sequelize.sync({ alter: true })
+    .then(() => {
+      console.log("✅ Todas as tabelas foram atualizadas com sucesso!");
+    })
+    .catch((error) => {
+      console.error("❌ Erro ao sincronizar tabelas:", error);
+    });*/
   return Users;
 };
+
+

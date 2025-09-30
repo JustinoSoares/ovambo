@@ -6,7 +6,7 @@ module.exports = {
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      if (!email || !password){
+      if (!email || !password) {
         return res.status(404).json({
           status: false,
           error: [
@@ -53,18 +53,12 @@ module.exports = {
       // Gerar Token
       const SECRET = process.env.JWT_SECRET;
       const token = jwt.sign(
-        { id: user.id, nome : user.nome_completo , email: user.email, type: user.type },
-        SECRET,
-        { expiresIn: process.env.JWT_EXPIRATION || "1d" }
+        { id: user.id, nome: user.nome_completo, email: user.email, type: user.type },
+        SECRET
       );
 
       return res.status(200).json({
-        status: true,
-        data: {
-          usuarioId: user.id,
-          type: user.type,
-          token,
-        },
+        token,
       });
     } catch (error) {
       return res.status(500).json({
