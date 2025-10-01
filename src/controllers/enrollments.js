@@ -15,6 +15,19 @@ module.exports = {
             })
         }
 
+        const existeCourse = await Courses.findOne({
+            where : {
+                id : course_id
+            }
+        })
+
+        if (!existeCourse)
+        {
+            return res.status(400).json({
+                message: "Curso não encontrado, tente um outro"
+            })
+        }
+
         if (!full_name || !email || !phone) {
             return res.status(400).json({
                 message: "Informe o seu nome e o seu contacto (email, phone)"
@@ -24,6 +37,22 @@ module.exports = {
         if (!address || !occupation) {
             return res.status(400).json({
                 message: "Diga o seu endereço e a sua ocupação"
+            })
+        }
+
+        const existEnrollments = await Enrollments.findOne({
+            where : {
+                [Op.or] : {
+                    email : email,
+                    phone : phone
+                }
+            }
+        })
+
+        if (existEnrollments)
+        {
+             return res.status(400).json({
+                message: "Este usuário já inscrito neste curso"
             })
         }
 
