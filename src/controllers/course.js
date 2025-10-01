@@ -110,12 +110,19 @@ module.exports = {
         const limit = req.query.limit || 10;
         const page = req.query.page || 1;
         const offset = limit * (page - 1);
+        const category_id = req.query.category_id;
+
+        let newWhere = {};
+
+        newWhere.active = true;
+        if (category_id)
+            newWhere.category_id = category_id;
 
         try {
             const courses = await Courses.findAll({
                 limit: limit,
                 offset: offset,
-                where: { active: true },
+                where: newWhere,
                 order: [["createdAt", "DESC"]]
             });
             return res.status(200).json(courses);
