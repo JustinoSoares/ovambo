@@ -92,6 +92,7 @@ module.exports = {
             const enrollments = await Enrollments.findAll({
                 limit: limit,
                 offset: offset,
+                order: [["createdAt", "DESC"]],
                 where: {
                     course_id: course_id
                 }

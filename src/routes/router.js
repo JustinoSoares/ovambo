@@ -34,4 +34,3 @@ router.post("/subscribe/pay/:subscribe_id", auth.admin, pay)
 router.post("/auth/login",  login);
 
 module.exports = router;
-

@@ -103,7 +103,8 @@ module.exports = {
             const courses = await Courses.findAll({
                 limit: limit,
                 offset: offset,
-                where: { active: true }
+                where: { active: true },
+                order: [["createdAt", "DESC"]]
             });
             return res.status(200).json(courses);
         } catch (error) {

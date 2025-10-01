@@ -72,7 +72,8 @@ module.exports = {
         try {
             const category = await Categories.findAll({
                 limit: limit,
-                offset: offset
+                offset: offset,
+                order: [["createdAt", "DESC"]]
             });
             return res.status(200).json(category);
         } catch (error) {
