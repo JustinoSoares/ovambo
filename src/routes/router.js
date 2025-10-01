@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {createCourse, listCourse, eachCourse, updateCourse, deleteCourse} =  require("../controllers/course");
 const { createCategory, listCategory, eachCategory, updateCategory, deleteCategory } = require("../controllers/category.js");
+require("dotenv").config();
 
 const auth = require("../auth/main.auth.js");
 const { createEnrollments, listEnrollments, eachEnrollments, deleteEnrollments, searchSubscribed, pay } = require("../controllers/enrollments.js");

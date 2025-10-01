@@ -1,6 +1,7 @@
 const { where, Op } = require("sequelize");
-const { Enrollments } = require("../../models/index.js");
+const { Enrollments, Courses } = require("../../models/index.js");
 const { validate } = require("uuid");
+const { sendEmail } = require("../email/send.js");
 
 module.exports = {
     async createEnrollments(req, res) {
@@ -187,10 +188,17 @@ module.exports = {
 
     async pay(req, res) {
         const subscribe_id = req.params.subscribe_id;
+        const { description } = req.body;
 
         if (!subscribe_id || !validate(subscribe_id)) {
             return res.status(400).json({
                 message: "Por favor especifique o inscrição",
+            });
+        }
+
+        if (!description) {
+            return res.status(400).json({
+                message: "Por favor, dê uma descrição para o cliente",
             });
         }
         try {
@@ -212,13 +220,41 @@ module.exports = {
                 })
             }
 
-            await Enrollments.update({
-                status: "paid"
-            }, {
+            const course = await Courses.findOne({
                 where: {
-                    id: subscribe_id
+                    id: existSubscribe.course_id
                 }
             });
+
+            if (!course) {
+                return res.status(400).json({
+                    message: "Este curso está indisponível",
+                })
+            }
+
+            try {
+                await Enrollments.update({
+                    status: "paid"
+                }, {
+                    where: {
+                        id: subscribe_id
+                    }
+                });
+                const dataSend = {
+                    full_name: existSubscribe.full_name,
+                    title: course.title,
+                    price: course.price
+                }
+                const subject = "Olá! Seu pagamento foi bem sucedido";
+                await sendEmail(existSubscribe.email, subject, description, dataSend);
+            } catch (error) {
+                return res.status(400).json({
+                    message: "Não foi possível mandar um email de confirmação, tente manualmente",
+                })
+            }
+
+
+
             return res.status(200).json({
                 message: "Sucesso",
             })

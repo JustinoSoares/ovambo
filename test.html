@@ -1,0 +1,121 @@
+ <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmação de Pagamento</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: #735048;
+      text-align: center;
+      padding: 40px 20px;
+      color: #ffffff;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .header p {
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    .content {
+      padding: 30px;
+      color: #333333;
+      line-height: 1.8;
+    }
+    .content h2 {
+      color: grey;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .details {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .details p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    .details p strong {
+      color: #A6918D;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #735048;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 10px;
+      margin: 20px 0;
+      transition: transform 0.2s;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f8f9fa;
+      font-size: 14px;
+      color: #666666;
+    }
+    .footer a {
+      color: #59270A;
+      text-decoration: none;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 10px;
+      }
+      .header {
+        padding: 30px 15px;
+      }
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Pagamento Confirmado com Sucesso!</h1>
+      <p>Obrigado por confiar em [Nome da Sua Empresa]!</p>
+    </div>
+    <div class="content">
+      <h2>Olá, [Nome do Cliente]!</h2>
+      <p>Estamos entusiasmados em informar que seu pagamento foi processado com sucesso! Confira os detalhes abaixo:</p>
+      <div class="details">
+        <p><strong>Produto/Serviço:</strong> [Nome do Produto ou Serviço]</p>
+        <p><strong>Valor:</strong> R$[Valor do Pagamento]</p>
+        <p><strong>Data do Pagamento:</strong> [Data do Pagamento]</p>
+        <p><strong>Referência do Pedido:</strong> [Número do Pedido]</p>
+      </div>
+      <p>${texto}</p>
+      <a href="[Link para Ação, ex: acessar conta]" class="button">Começar Agora</a>
+      <p>Qualquer dúvida? Entre em contato com nossa equipe de suporte!</p>
+    </div>
+    <div class="footer">
+      <p>&copy; [Ano] [Nome da Sua Empresa]. Todos os direitos reservados.</p>
+      <p>Precisa de ajuda? <a href="mailto:[Seu Email de Suporte]">Fale conosco</a></p>
+    </div>
+  </div>
+</body>
+</html>
