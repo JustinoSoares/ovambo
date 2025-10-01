@@ -47,6 +47,18 @@ module.exports = {
             })
         }
 
+        const existCourse = await Courses.findOne({
+            where: {
+                title: title
+            }
+        });
+
+        if (existCourse) {
+            return res.status(400).json({
+                message: "Já existe um curso com este nome, tente um outro"
+            });
+        }
+
         try {
             const createCourse = await Courses.create({
                 title: title,
@@ -153,8 +165,20 @@ module.exports = {
                 message: "O limit de inscritos, e o preço do curso devem ser numericos"
             })
         }
+        // 🚨 Verificar se já existe outra categoria com o mesmo nome
+        if (title) {
+            const nameAlreadyExists = await Courses.findOne({
+                where: { title }
+            });
 
+            if (nameAlreadyExists && nameAlreadyExists.id !== course_id) {
+                return res.status(400).json({
+                    message: "Já existe um curso com este nome"
+                });
+            }
+        }
         try {
+
             await Courses.update(
                 {
                     title: title || existCourse.title,
@@ -166,7 +190,7 @@ module.exports = {
                     date_start: date_start || existCourse.date_start,
                     workload: workload || existCourse.workload,
                     image: image || existCourse.image,
-                    active : active || existCourse.active,
+                    active: active || existCourse.active,
                     category_id: category_id || existCourse.category_id
                 },
                 {
