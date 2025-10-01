@@ -186,6 +186,11 @@ module.exports = {
         }
         try {
 
+            let newImage = image;
+            if (newImage == "")
+                newImage = "";
+            else if (!newImage)
+                newImage = existCourse.image;
             await Courses.update(
                 {
                     title: title || existCourse.title,
@@ -196,7 +201,7 @@ module.exports = {
                     modality: modality || existCourse.modality,
                     date_start: date_start || existCourse.date_start,
                     workload: workload || existCourse.workload,
-                    image: image || existCourse.image,
+                    image: newImage,
                     active: active || existCourse.active,
                     category_id: category_id || existCourse.category_id
                 },
