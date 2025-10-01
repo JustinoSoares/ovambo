@@ -1,5 +1,5 @@
 const { where, ValidationError } = require("sequelize");
-const { Courses, Enrollments } = require("../../models/index.js");
+const { Courses, Enrollments, Categories } = require("../../models/index.js");
 const { validate } = require("uuid");
 
 module.exports = {
@@ -13,6 +13,16 @@ module.exports = {
         if (!category_id || !validate(category_id)) {
             return res.status(400).json({
                 message: "Precisa especificar em qual categoria este curso vai se encontrar"
+            })
+        }
+
+        const existCategory = await Categories.findOne({
+            where: { id: category_id }
+        });
+
+        if (!existCategory) {
+            return res.status(400).json({
+                message: "Esta categoria não existe"
             })
         }
 
@@ -91,13 +101,39 @@ module.exports = {
                 })
             }
 
-            const courses = await Courses.findOne({
+            const course = await Courses.findOne({
                 where: {
                     id: course_id
-                }
+                },
+                include: [
+                    {
+                        model: Categories,
+                        as: "category", // garante que tens associação no model
+                        attributes: ["id", "name"]
+                    }
+                ]
             });
 
-            return res.status(200).json(courses);
+            if (!course) {
+                return res.status(400).json({
+                    message: "Este curso não existe"
+                })
+            }
+
+            const existCategory = await Categories.findOne({
+                where: { id: course.category_id }
+            })
+
+            if (!existCategory) {
+                return res.status(400).json({
+                    message: "Esta categoria não existe"
+                })
+            }
+            // Converter para JSON limpo
+            const result = course.toJSON();
+            result.category_name = result.category.name;
+            delete result.category;
+            return res.status(200).json(result);
         } catch (error) {
             return res.status(500).json({
                 message: "Erro ao trazer o curso",
@@ -107,29 +143,45 @@ module.exports = {
     },
 
     async listCourse(req, res) {
-        const limit = req.query.limit || 10;
-        const page = req.query.page || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
         const offset = limit * (page - 1);
         const category_id = req.query.category_id;
 
-        let newWhere = {};
+        let newWhere = { active: true };
 
-        newWhere.active = true;
-        if (category_id)
+        if (category_id) {
             newWhere.category_id = category_id;
+        }
 
         try {
             const courses = await Courses.findAll({
-                limit: limit,
-                offset: offset,
+                limit,
+                offset,
                 where: newWhere,
-                order: [["createdAt", "DESC"]]
+                order: [["createdAt", "DESC"]],
+                include: [
+                    {
+                        model: Categories,
+                        as: "category", // garante que tens associação no model
+                        attributes: ["id", "name"]
+                    }
+                ]
             });
-            return res.status(200).json(courses);
+
+            // Converter para JSON limpo
+            const result = courses.map(course => {
+                const data = course.toJSON();
+                data.category_name = data.category?.name || null;
+                delete data.category; // opcional: remover o objeto category completo
+                return data;
+            });
+
+            return res.status(200).json(result);
         } catch (error) {
             return res.status(500).json({
                 message: "Erro ao trazer os cursos",
-                error: error
+                error: error.message
             });
         }
     },
@@ -185,7 +237,6 @@ module.exports = {
             }
         }
         try {
-
             let newImage = image;
             if (newImage == "")
                 newImage = "";
@@ -221,6 +272,45 @@ module.exports = {
             return res.status(500).json({
                 message: "Não foi possível actualizar este curso, tente novamente",
                 error: error
+            });
+        }
+    },
+
+    async searchCourses(req, res) {
+        try {
+            const { title } = req.body; // termo de busca
+            const { course_id } = req.params;
+
+            if (!course_id || !validate(course_id)) {
+                return res.status(400).json({
+                    message: "Por favor especifique o curso",
+                });
+            }
+
+            if (!title) {
+                return res.status(400).json({
+                    message: "Por favor digite o nome do curso",
+                });
+            }
+
+            let where = { course_id };
+
+            if (title) {
+                where[Op.or] = [
+                    { title: { [Op.iLike]: `%${title}%` } },
+                ];
+            }
+
+            const courses = await Courses.findAll({
+                where,
+                order: [["createdAt", "DESC"]]
+            });
+
+            return res.status(200).json(courses);
+        } catch (error) {
+            return res.status(500).json({
+                message: "Erro ao buscar cursos",
+                error: error.message
             });
         }
     },

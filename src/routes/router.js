@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {createCourse, listCourse, eachCourse, updateCourse, deleteCourse} =  require("../controllers/course");
+const {createCourse, listCourse, eachCourse, updateCourse, deleteCourse, searchCourses} =  require("../controllers/course");
 const { createCategory, listCategory, eachCategory, updateCategory, deleteCategory } = require("../controllers/category.js");
 require("dotenv").config();
 
@@ -19,6 +19,7 @@ router.delete("/category/delete/:category_id", auth.admin, deleteCategory);
 router.post("/course/create/:category_id", auth.admin,  createCourse);
 router.get("/course/all", listCourse);
 router.get("/course/each/:course_id", eachCourse);
+router.get("/course/search/:course_id", searchCourses);
 router.put("/course/update/:course_id", auth.admin, updateCourse);
 router.delete("/course/delete/:course_id", auth.admin, deleteCourse);
 
