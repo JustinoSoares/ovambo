@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const routerMain = require("./routes/router.js");
-const master = require("./middleware/master.middleware.js")();
+//const master = require("./middleware/master.middleware.js")();
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
